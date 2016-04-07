@@ -1,0 +1,48 @@
+{
+    "name": "jclyons52/page-preview",
+    "type": "library",
+    "description": "get info about page links and generate preview images",
+    "keywords": [
+        "jclyons52",
+        "page-preview"
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "homepage": "https://github.com/jclyons52/page-preview",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Joseph Lyons",
+            "email": "jclyons52@gmail.com",
+            "homepage": "http://jclyons52.github.io/",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php" : "~5.5|~7.0",
+        "guzzlehttp/guzzle": "~6.0",
+        "jclyons52/php-query": "^1.0@dev"
+    },
+    "require-dev": {
+        "phpunit/phpunit" : "4.*",
+        "squizlabs/php_codesniffer": "~2.3"
+    },
+    "autoload": {
+        "psr-0": {
+            "Jclyons52\\PagePreview\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Jclyons52\\PagePreview\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
+}
