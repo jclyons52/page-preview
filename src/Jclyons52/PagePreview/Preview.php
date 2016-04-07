@@ -22,7 +22,6 @@ class Preview
 
     public function fetch($url)
     {
-
         $this->url = parse_url($url);
 
         $this->result = $this->client->request('GET', $url);
@@ -48,7 +47,10 @@ class Preview
 
         $keywords = explode(',', $keywordString);
 
-        return array_map(function($word){ return trim($word); }, $keywords);
+        return array_map(function ($word) {
+            return trim($word);
+
+        }, $keywords);
     }
 
     public function metaTitle()
@@ -59,7 +61,7 @@ class Preview
     public function meta()
     {
         $metaTags = $this->document->querySelectorAll('meta');
-
+        $values = [];
         foreach ($metaTags as $meta) {
             $values[$meta->attr('name')] = $meta->attr('content');
         }
@@ -70,7 +72,8 @@ class Preview
     {
         $images = $this->document->querySelectorAll('img');
         $urls = $images->attr('src');
-        foreach($urls as $url){
+        $result = [];
+        foreach ($urls as $url) {
             $result[] = $this->formatUrl($url);
         }
         return $result;
@@ -86,11 +89,17 @@ class Preview
     {
         $path = array_key_exists('path', $this->url) ? $this->url['path'] : '';
 
-        if (filter_var($url, FILTER_VALIDATE_URL) !== false) return $url;
+        if (filter_var($url, FILTER_VALIDATE_URL) !== false) {
+            return $url;
+        }
 
-        if (strpos($url, $this->url['host'])) return 'http://'. $url;
-        var_dump($url);
-        if (substr($url, 0, 1) === '/') return 'http://' . $this->url['host'] . $url;
+        if (strpos($url, $this->url['host'])) {
+            return 'http://'. $url;
+        }
+
+        if (substr($url, 0, 1) === '/') {
+            return 'http://' . $this->url['host'] . $url;
+        }
 
         return 'http://' . $this->url['host'] .$path . '/' . $url;
 
