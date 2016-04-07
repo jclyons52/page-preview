@@ -92,16 +92,11 @@ class Preview
         if (filter_var($url, FILTER_VALIDATE_URL) !== false) {
             return $url;
         }
-
-        if (strpos($url, $this->url['host'])) {
-            return 'http://'. $url;
-        }
-
+        
         if (substr($url, 0, 1) === '/') {
             return 'http://' . $this->url['host'] . $url;
         }
 
         return 'http://' . $this->url['host'] .$path . '/' . $url;
-
     }
 }
