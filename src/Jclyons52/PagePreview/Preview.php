@@ -108,7 +108,7 @@ class Preview
         return $result;
     }
 
-    public function render($type = 'card')
+    public function render($type = 'media')
     {
         $title = $this->metaTitle();
 
@@ -118,7 +118,11 @@ class Preview
 
         $templates = new Engine(__DIR__ . '/Templates');
 
-        return $templates->render('card', [ 'title' => $title, 'image' => $image, 'body' => $description, 'url' => $this->url ]);
+        return $templates->render($type, [
+            'title' => $title,
+            'image' => $image,
+            'body' => $description, 'url' => $this->url
+        ]);
     }
 
     /**
