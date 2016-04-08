@@ -150,4 +150,18 @@ class PreviewTest extends PHPUnit_Framework_TestCase
         
         $this->assertEquals('http://www.example.com/images/img2.png', $images[2]);
     }
+    
+    /**
+     * @test
+     */
+    public function it_renders_a_preview()
+    {
+        $preview = new Preview($this->client);
+
+        $preview->fetch('http://www.example.com');
+        
+        $preview = $preview->render();
+        
+        $this->assertContains('Meta title', $preview);
+    }
 }
