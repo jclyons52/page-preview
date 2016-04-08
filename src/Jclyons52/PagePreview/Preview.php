@@ -47,11 +47,7 @@ class Preview
      */
     public function title()
     {
-        $element = $this->document->querySelector('meta[name="title"]')->attr('content');
-
-        if ($element === null) {
-            return $this->document->querySelector('title')->text();
-        }
+        return $this->document->querySelector('title')->text();
     }
 
     /**
@@ -114,7 +110,11 @@ class Preview
 
     public function render($type = 'media')
     {
-        $title = $this->title();
+        $title = $this->metaTitle();
+
+        if ($title === null) {
+            $title = $this->title();
+        }
 
         $image = $this->images()[0];
 
