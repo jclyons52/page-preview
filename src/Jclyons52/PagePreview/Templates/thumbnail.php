@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-sm-6 col-md-4">
         <div class="thumbnail">
-            <img src="<?= $url ?>" alt="...">
+            <img src="<?= $image ?>" alt="...">
             <div class="caption">
                 <h3><?= $title ?></h3>
                 <p><?= $body ?></p>

@@ -164,4 +164,18 @@ class PreviewTest extends PHPUnit_Framework_TestCase
         
         $this->assertContains('Meta title', $preview);
     }
+
+    /**
+     * @test
+     */
+    public function it_renders_templates_dynamically()
+    {
+        $preview = new Preview($this->client);
+
+        $preview->fetch('http://www.example.com');
+
+        $preview = $preview->render('thumbnail');
+
+        $this->assertContains('class="thumbnail"', $preview);
+    }
 }
