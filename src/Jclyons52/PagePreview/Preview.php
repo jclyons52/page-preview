@@ -8,14 +8,34 @@ use League\Plates\Engine;
 
 class Preview
 {
+    /**
+     * body from guzzle request
+     * @var string
+     */
     protected $result;
 
+    /**
+     * Guzzle client
+     * @var \GuzzleHttp\Client
+     */
     protected $client;
 
+    /**
+     * PHPQuery document object that will be used to select elements
+     * @var \Jclyons52\PHPQuery\Document
+     */
     public $document;
 
+    /**
+     * reference to the url parameter the user passes into the fetch method
+     * @var string
+     */
     public $url;
 
+    /**
+     * destructured array of url components from parse_url
+     * @var array
+     */
     protected $urlComponents;
 
     public function __construct(Client $client)
@@ -53,18 +73,6 @@ class Preview
     /**
      * @return mixed
      */
-    public function metaDescription()
-    {
-        $description = $this->document->querySelector('meta[name="description"]');
-        if ($description === null) {
-            return null;
-        }
-        return $description->attr('content');
-    }
-
-    /**
-     * @return mixed
-     */
     public function metaKeywords()
     {
         $keywordString = $this->document->querySelector('meta[name="keywords"]')->attr('content');
@@ -78,23 +86,24 @@ class Preview
     }
 
     /**
-     * @return mixed
-     */
-    public function metaTitle()
-    {
-        $title = $this->document->querySelector('meta[name="title"]');
-        if ($title === null) {
-            return null;
-        }
-        return $title->attr('content');
-    }
-
-    /**
      * @return array
      */
-    public function meta()
+    public function meta($element = null)
     {
-        $metaTags = $this->document->querySelectorAll('meta');
+        $selector = "meta";
+        if ($element) {
+            $selector .= "[name='{$element}']";
+            $metaTags =  $this->document->querySelector($selector);
+            if ($metaTags === null) {
+                return null;
+            }
+            return  $metaTags->attr('content');
+        }
+        $metaTags = $this->document->querySelectorAll($selector);
+
+        if ($metaTags === []) {
+            return null;
+        }
         $values = [];
         foreach ($metaTags as $meta) {
             $values[$meta->attr('name')] = $meta->attr('content');
@@ -103,7 +112,8 @@ class Preview
     }
 
     /**
-     * @return array
+     * get source attributes of all image tags on the page
+     * @return array<String>
      */
     public function images()
     {
@@ -116,11 +126,20 @@ class Preview
         return $result;
     }
 
-    public function render($type = 'media')
+    /**
+     * returns a string of the link preview html
+     * @param  string $type     template name to be selected
+     * @param  string $viewPath path to templates folder
+     * @return string           html for link preview
+     */
+    public function render($type = 'media', $viewPath = null)
     {
-        $title = $this->metaTitle();
+        if ($viewPath === null) {
+            $viewPath = __DIR__ . '/Templates';
+        }
+        $title = $this->meta('title');
 
-        if ($title === null) {
+        if (!$title) {
             $title = $this->title();
         }
         $images = $this->images();
@@ -129,10 +148,10 @@ class Preview
         } else {
             $image = '#';
         }
-        
-        $description = $this->metaDescription();
 
-        $templates = new Engine(__DIR__ . '/Templates');
+        $description = $this->meta('description');
+
+        $templates = new Engine($viewPath);
 
         return $templates->render($type, [
             'title' => $title,

@@ -77,7 +77,7 @@ class PreviewTest extends PHPUnit_Framework_TestCase
 
         $preview->fetch('www.example.com');
 
-        $this->assertEquals('Foo bar bar foo', $preview->metaDescription());
+        $this->assertEquals('Foo bar bar foo', $preview->meta('description'));
     }
 
     /**
@@ -101,7 +101,7 @@ class PreviewTest extends PHPUnit_Framework_TestCase
 
         $preview->fetch('www.example.com');
 
-        $this->assertEquals('Meta title', $preview->metaTitle());
+        $this->assertEquals('Meta title', $preview->meta('title'));
     }
 
     /**
