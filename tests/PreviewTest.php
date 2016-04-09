@@ -168,6 +168,30 @@ class PreviewTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function it_renders_a_preview_without_meta()
+    {
+        $body = file_get_contents(__DIR__ . '/data/noMeta.html');
+
+        $mock = new MockHandler([
+            new Response(200, ['X-Foo' => 'Bar'], $body)
+        ]);
+
+        $handler = HandlerStack::create($mock);
+
+        $this->client = new Client(['handler' => $handler]);
+
+        $preview = new Preview($this->client);
+
+        $preview->fetch('http://www.example.com');
+        
+        $preview = $preview->render();
+        
+        $this->assertContains('Document', $preview);
+    }
+
+    /**
+     * @test
+     */
     public function it_renders_templates_dynamically()
     {
         $preview = new Preview($this->client);

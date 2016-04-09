@@ -55,7 +55,11 @@ class Preview
      */
     public function metaDescription()
     {
-        return $this->document->querySelector('meta[name="description"]')->attr('content');
+        $description = $this->document->querySelector('meta[name="description"]');
+        if ($description === null) {
+            return null;
+        }
+        return $description->attr('content');
     }
 
     /**
@@ -78,7 +82,11 @@ class Preview
      */
     public function metaTitle()
     {
-        return $this->document->querySelector('meta[name="title"]')->attr('content');
+        $title = $this->document->querySelector('meta[name="title"]');
+        if ($title === null) {
+            return null;
+        }
+        return $title->attr('content');
     }
 
     /**
@@ -115,9 +123,13 @@ class Preview
         if ($title === null) {
             $title = $this->title();
         }
-
-        $image = $this->images()[0];
-
+        $images = $this->images();
+        if (count($images) > 0) {
+            $image = $images[0];
+        } else {
+            $image = '#';
+        }
+        
         $description = $this->metaDescription();
 
         $templates = new Engine(__DIR__ . '/Templates');
