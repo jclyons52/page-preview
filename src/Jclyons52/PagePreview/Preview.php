@@ -70,7 +70,7 @@ class Preview
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function title()
     {
@@ -93,6 +93,7 @@ class Preview
     }
 
     /**
+     * @param string $element
      * @return array
      */
     public function meta($element = null)
@@ -119,7 +120,9 @@ class Preview
     {
         $images = $this->document->querySelectorAll('img');
 
-        if ($images === []) return [];
+        if ($images === []) {
+            return [];
+        }
 
         $urls = $images->attr('src');
         $result = [];
@@ -165,7 +168,7 @@ class Preview
 
     /**
      * @param string $url
-     * @return array
+     * @return string
      */
     private function formatUrl($url)
     {
