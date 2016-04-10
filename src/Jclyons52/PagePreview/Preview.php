@@ -10,9 +10,11 @@ class Preview
     
     public $title;
     
-    public $body;
+    public $description;
     
     public $images;
+
+    public $meta;
     
     private $viewPath;
     
@@ -22,7 +24,7 @@ class Preview
         
         $this->title = $data['title'];
         
-        $this->body = $data['body'];
+        $this->description = $data['description'];
         
         $this->images = $data['images'];
         
@@ -30,37 +32,53 @@ class Preview
         
         $this->viewPath = __DIR__ . '/Templates';
     }
-    
+
+    /**
+     * @param string $viewPath
+     */
     public function setViewPath($viewPath)
     {
         $this->viewPath = $viewPath;
     }
-    
+
+    /**
+     * @param string $type
+     * @return string
+     */
     public function render($type = 'media')
     {
-        if (count($this->images) > 0) {
-            $image = $this->images[0];
-        } else {
-            $image = null;
-        }
-        
         $templates = new Engine($this->viewPath);
 
-        return $templates->render($type, [
-            'title' => $this->title,
-            'image' => $image,
-            'body' => $this->body, 
-            'url' => $this->url
-        ]);
+        return $templates->render($type, $this->toArray());
     }
-    
+
+    /**
+     * @return array
+     */
     public function toArray()
     {
-        
+
+        $title = $this->title;
+        if (array_key_exists('title', $this->meta)) {
+            $title = $this->meta['title'];
+        }
+        if (count($this->images) < 1) {
+            $this->images[0] = null;
+        }
+        return [
+            'title' => $title,
+            'images' => $this->images,
+            'description' => $this->description,
+            'url' => $this->url,
+            'meta' => $this->meta,
+        ];
     }
-    
+
+    /**
+     * @return string
+     */
     public function toJson()
     {
-        
+        return json_encode($this->toArray());
     }
 }

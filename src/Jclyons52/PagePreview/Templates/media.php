@@ -2,17 +2,17 @@
 // @codingStandardsIgnoreStart
 ?>
 <div class="media">
-    <?php if ($image) : ?>
+    <?php if ($images[0]) : ?>
         <div class="media-left">
             <a href="<?= $url ?>">
-                <img class="media-object" src="<?= $image ?>" alt="<?= $title ?>">
+                <img class="media-object" src="<?= $images[0] ?>" alt="<?= $title ?>">
             </a>
         </div>
     <?php endif; ?>
     <div class="media-body">
         <a href="<?= $url ?>">
             <h4 class="media-heading"><?= $title ?></h4>
-            <?= $body ?>
+            <?= $description ?>
         </a>
     </div>
 </div>

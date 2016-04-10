@@ -4,7 +4,6 @@ namespace Jclyons52\PagePreview;
 
 use GuzzleHttp\Client;
 use Jclyons52\PHPQuery\Document;
-use League\Plates\Engine;
 
 class PreviewBuilder
 {
@@ -60,10 +59,10 @@ class PreviewBuilder
 
         $urlComponents = parse_url($url);
 
-        if ($urlComponents === false) {
+        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
             throw new \Exception("url {$this->url} is invalid");
         }
-        $this->urlComponents = parse_url($url);
+        $this->urlComponents = $urlComponents;
 
         $result = $this->client->request('GET', $url);
 
@@ -87,7 +86,13 @@ class PreviewBuilder
      */
     public function metaKeywords()
     {
-        $keywordString = $this->document->querySelector('meta[name="keywords"]')->attr('content');
+        $keywordsElement = $this->document->querySelector('meta[name="keywords"]');
+
+        if (!$keywordsElement) {
+            return [];
+        }
+
+        $keywordString = $keywordsElement->attr('content');
 
         $keywords = explode(',', $keywordString);
 
@@ -145,21 +150,24 @@ class PreviewBuilder
      */
     public function getPreview()
     {
-        $title = $this->meta('title');
+        $title = $this->title();
 
-        if (!$title) {
-            $title = $this->title();
-        }
         $images = $this->images();
 
         $description = $this->meta('description');
-        
+
         $meta = $this->meta();
+
+        $keywords =  $this->metaKeywords();
+
+        if ($keywords !== []) {
+            $meta['keywords'] = $keywords;
+        }
 
         return new Preview([
             'title' => $title,
             'images' => $images,
-            'body' => $description, 
+            'description' => $description,
             'url' => $this->url,
             'meta' => $meta,
         ]);
@@ -179,7 +187,6 @@ class PreviewBuilder
         if (substr($url, 0, 1) === '/') {
             return 'http://' . $this->urlComponents['host'] . $url;
         }
-        var_dump($this->urlComponents);
         return 'http://' . $this->urlComponents['host'] .$path . '/' . $url;
     }
 
