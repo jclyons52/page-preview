@@ -9,12 +9,6 @@ use League\Plates\Engine;
 class Preview
 {
     /**
-     * body from guzzle request
-     * @var string
-     */
-    protected $result;
-
-    /**
      * Guzzle client
      * @var \GuzzleHttp\Client
      */
@@ -50,19 +44,26 @@ class Preview
         return new static($client);
     }
 
+
     /**
      * @param string $url
      * @return Document
+     * @throws \Exception
      */
     public function fetch($url)
     {
         $this->url = $url;
 
+        $urlComponents = parse_url($url);
+
+        if ($urlComponents === false) {
+            throw new \Exception("url {$this->url} is invalid");
+        }
         $this->urlComponents = parse_url($url);
 
-        $this->result = $this->client->request('GET', $url);
+        $result = $this->client->request('GET', $url);
 
-        $body = $this->result->getBody()->getContents();
+        $body = $result->getBody()->getContents();
 
         $this->document = new Document($body);
 
@@ -99,7 +100,7 @@ class Preview
     public function meta($element = null)
     {
         $selector = "meta";
-        if ($element) {
+        if ($element !== null) {
             $selector .= "[name='{$element}']";
             $metaTags =  $this->document->querySelector($selector);
             if ($metaTags === null) {
