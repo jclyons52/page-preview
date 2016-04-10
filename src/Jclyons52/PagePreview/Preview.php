@@ -43,6 +43,13 @@ class Preview
         $this->client = $client;
     }
 
+    public static function create()
+    {
+        $client = new Client();
+
+        return new static($client);
+    }
+
     /**
      * @param string $url
      * @return Document
@@ -101,14 +108,7 @@ class Preview
         }
         $metaTags = $this->document->querySelectorAll($selector);
 
-        if ($metaTags === []) {
-            return null;
-        }
-        $values = [];
-        foreach ($metaTags as $meta) {
-            $values[$meta->attr('name')] = $meta->attr('content');
-        }
-        return $values;
+        return $this->metaTagsToArray($metaTags);
     }
 
     /**
@@ -118,6 +118,9 @@ class Preview
     public function images()
     {
         $images = $this->document->querySelectorAll('img');
+
+        if ($images === []) return [];
+
         $urls = $images->attr('src');
         $result = [];
         foreach ($urls as $url) {
@@ -146,7 +149,7 @@ class Preview
         if (count($images) > 0) {
             $image = $images[0];
         } else {
-            $image = '#';
+            $image = null;
         }
 
         $description = $this->meta('description');
@@ -175,5 +178,27 @@ class Preview
             return 'http://' . $this->urlComponents['host'] . $url;
         }
         return 'http://' . $this->urlComponents['host'] .$path . '/' . $url;
+    }
+
+    /**
+     * @param $metaTags
+     * @return array
+     */
+    private function metaTagsToArray($metaTags)
+    {
+        $values = [];
+        foreach ($metaTags as $meta) {
+            $name = $meta->attr('name');
+            if ($name === '') {
+                $name = $meta->attr('property');
+            }
+            $content = $meta->attr('content');
+            if ($name === '' || $content == '') {
+                continue;
+            }
+            $values[$name] = $content;
+        }
+
+        return $values;
     }
 }

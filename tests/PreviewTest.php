@@ -131,6 +131,30 @@ class PreviewTest extends PHPUnit_Framework_TestCase
             $this->assertEquals($item, $meta[$key]);
         }
     }
+
+    /**
+     * @test
+     */
+    public function it_returns_empty_array_if_there_is_no_meta()
+    {
+        $body = file_get_contents(__DIR__ . '/data/noMeta.html');
+
+        $mock = new MockHandler([
+            new Response(200, ['X-Foo' => 'Bar'], $body)
+        ]);
+
+        $handler = HandlerStack::create($mock);
+
+        $client = new Client(['handler' => $handler]);
+
+        $preview = new Preview($client);
+
+        $preview->fetch('www.example.com');
+
+        $meta = $preview->meta();
+
+        $this->assertEquals([], $meta);
+    }
     
     /**
      * @test
@@ -192,14 +216,48 @@ class PreviewTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function it_renders_page_without_image()
+    {
+        $body = file_get_contents(__DIR__ . '/data/noImages.html');
+
+        $mock = new MockHandler([
+            new Response(200, ['X-Foo' => 'Bar'], $body)
+        ]);
+
+        $handler = HandlerStack::create($mock);
+
+        $this->client = new Client(['handler' => $handler]);
+
+        $preview = new Preview($this->client);
+
+        $preview->fetch('http://www.example.com');
+
+        $preview = $preview->render();
+
+        $this->assertNotContains('class="media-left"', $preview);
+    }
+
+    /**
+     * @test
+     */
     public function it_renders_templates_dynamically()
     {
         $preview = new Preview($this->client);
 
         $preview->fetch('http://www.example.com');
 
-        $preview = $preview->render('thumbnail');
+        $this->assertContains('class="thumbnail"', $preview->render('thumbnail'));
+        
+        $this->assertContains('class="demo-card-wide', $preview->render('card'));
+    }
 
-        $this->assertContains('class="thumbnail"', $preview);
+    /**
+     * @test
+     */
+    public function it_creates_a_new_instance_with_dependencies()
+    {
+        $preview = Preview::create();
+
+        $this->assertInstanceOf(Preview::class, $preview);
     }
 }
