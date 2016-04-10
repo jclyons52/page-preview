@@ -7,8 +7,7 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what
-PSRs you support to avoid any confusion with users and contributors.
+Creates link previews to pages with thumbnail, title and description
 
 ## Install
 
@@ -21,9 +20,12 @@ $ composer require jclyons52/page-preview
 ## Usage
 
 ``` php
-$skeleton = new jclyons52\Skeleton();
-echo $skeleton->echoPhrase('Hello, jclyons52!');
+$preview = Preview::create();
+$preview->fetch('https://somewebsite.com');
+echo $preview->render(); // returns bootstrap media link preview
 ```
+
+for
 
 ## Change log
 
