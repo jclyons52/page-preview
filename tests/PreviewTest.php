@@ -7,6 +7,7 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Exception\RequestException;
+use Jclyons52\PagePreview\PreviewBuilder;
 use Jclyons52\PHPQuery\Document;
 
 class PreviewTest extends PHPUnit_Framework_TestCase
@@ -35,9 +36,9 @@ class PreviewTest extends PHPUnit_Framework_TestCase
      */
     public function it_fetches_page()
     {
-        $preview = new Preview($this->client);
+        $previewBuilder = new PreviewBuilder($this->client);
 
-        $preview->fetch('www.example.com');
+        $preview = $previewBuilder->fetch('www.example.com');
 
         $this->assertInstanceOf(Document::class, $preview->document);
     }
@@ -49,11 +50,11 @@ class PreviewTest extends PHPUnit_Framework_TestCase
     {
         $this->client->request('GET', 'www.example.com');
 
-        $preview = new Preview($this->client);
+        $previewBuilder = new PreviewBuilder($this->client);
 
         $this->setExpectedException(\Exception::class);
 
-        $preview->fetch('www.example.com');
+        $preview = $previewBuilder->fetch('www.example.com');
     }
 
     /**
@@ -61,11 +62,11 @@ class PreviewTest extends PHPUnit_Framework_TestCase
      */
     public function it_gets_the_page_title()
     {
-        $preview = new Preview($this->client);
+        $previewBuilder = new PreviewBuilder($this->client);
 
-        $preview->fetch('www.example.com');
+        $preview = $previewBuilder->fetch('www.example.com');
 
-        $this->assertEquals('Document', $preview->title());
+        $this->assertEquals('Document', $preview->title);
     }
 
     /**
@@ -73,11 +74,11 @@ class PreviewTest extends PHPUnit_Framework_TestCase
      */
     public function it_gets_the_meta_description()
     {
-        $preview = new Preview($this->client);
+        $previewBuilder = new PreviewBuilder($this->client);
 
-        $preview->fetch('www.example.com');
+        $preview = $previewBuilder->fetch('www.example.com');
 
-        $this->assertEquals('Foo bar bar foo', $preview->meta('description'));
+        $this->assertEquals('Foo bar bar foo', $preview->description);
     }
 
     /**
@@ -85,9 +86,9 @@ class PreviewTest extends PHPUnit_Framework_TestCase
      */
     public function it_gets_the_meta_keywords()
     {
-        $preview = new Preview($this->client);
+        $previewBuilder = new PreviewBuilder($this->client);
 
-        $preview->fetch('www.example.com');
+        $preview = $previewBuilder->fetch('www.example.com');
 
         $this->assertEquals(['test', 'thing', 'stuff'], $preview->metaKeywords());
     }
@@ -97,11 +98,11 @@ class PreviewTest extends PHPUnit_Framework_TestCase
      */
     public function it_gets_the_meta_title()
     {
-        $preview = new Preview($this->client);
+        $previewBuilder = new PreviewBuilder($this->client);
 
-        $preview->fetch('www.example.com');
+        $preview = $previewBuilder->fetch('www.example.com');
 
-        $this->assertEquals('Meta title', $preview->meta('title'));
+        $this->assertEquals('Meta title', $preview->title);
     }
 
     /**
@@ -121,11 +122,11 @@ class PreviewTest extends PHPUnit_Framework_TestCase
             "viewport" => "minimal-ui",
         ];
 
-        $preview = new Preview($this->client);
+        $previewBuilder = new PreviewBuilder($this->client);
 
-        $preview->fetch('www.example.com');
+        $preview = $previewBuilder->fetch('www.example.com');
 
-        $meta = $preview->meta();
+        $meta = $preview->meta;
 
         foreach ($expected as $key => $item) {
             $this->assertEquals($item, $meta[$key]);
@@ -147,11 +148,11 @@ class PreviewTest extends PHPUnit_Framework_TestCase
 
         $client = new Client(['handler' => $handler]);
 
-        $preview = new Preview($client);
+        $previewBuilder = new PreviewBuilder($client);
 
-        $preview->fetch('www.example.com');
+        $preview = $previewBuilder->fetch('www.example.com');
 
-        $meta = $preview->meta();
+        $meta = $preview->meta;
 
         $this->assertEquals([], $meta);
     }
@@ -161,11 +162,11 @@ class PreviewTest extends PHPUnit_Framework_TestCase
      */
     public function it_gets_all_images()
     {
-        $preview = new Preview($this->client);
+        $previewBuilder = new PreviewBuilder($this->client);
 
-        $preview->fetch('http://www.example.com/directory');
+        $preview = $previewBuilder->fetch('http://www.example.com/directory');
 
-        $images = $preview->images();
+        $images = $preview->images;
 
         //relative path test
         $this->assertEquals('http://www.example.com/directory/files/mobile/1_magbrowser.jpg', $images[0]);
@@ -180,11 +181,11 @@ class PreviewTest extends PHPUnit_Framework_TestCase
      */
     public function it_renders_a_preview()
     {
-        $preview = new Preview($this->client);
+        $previewBuilder = new PreviewBuilder($this->client);
 
-        $preview->fetch('http://www.example.com');
+        $preview = $previewBuilder->fetch('http://www.example.com');
         
-        $preview = $preview->render();
+        $previewBuilder = $preview->render();
         
         $this->assertContains('Meta title', $preview);
     }
@@ -204,11 +205,11 @@ class PreviewTest extends PHPUnit_Framework_TestCase
 
         $this->client = new Client(['handler' => $handler]);
 
-        $preview = new Preview($this->client);
+        $previewBuilder = new PreviewBuilder($this->client);
 
-        $preview->fetch('http://www.example.com');
+        $preview = $previewBuilder->fetch('http://www.example.com');
         
-        $preview = $preview->render();
+        $previewBuilder = $preview->render();
         
         $this->assertContains('Document', $preview);
     }
@@ -228,11 +229,11 @@ class PreviewTest extends PHPUnit_Framework_TestCase
 
         $this->client = new Client(['handler' => $handler]);
 
-        $preview = new Preview($this->client);
+        $previewBuilder = new PreviewBuilder($this->client);
 
-        $preview->fetch('http://www.example.com');
+        $preview = $previewBuilder->fetch('http://www.example.com');
 
-        $preview = $preview->render();
+        $previewBuilder = $preview->render();
 
         $this->assertNotContains('class="media-left"', $preview);
     }
@@ -242,9 +243,9 @@ class PreviewTest extends PHPUnit_Framework_TestCase
      */
     public function it_renders_templates_dynamically()
     {
-        $preview = new Preview($this->client);
+        $previewBuilder = new PreviewBuilder($this->client);
 
-        $preview->fetch('http://www.example.com');
+        $preview = $previewBuilder->fetch('http://www.example.com');
 
         $this->assertContains('class="thumbnail"', $preview->render('thumbnail'));
         
@@ -256,8 +257,8 @@ class PreviewTest extends PHPUnit_Framework_TestCase
      */
     public function it_creates_a_new_instance_with_dependencies()
     {
-        $preview = Preview::create();
+        $previewBuilder = PreviewBuilder::create();
 
-        $this->assertInstanceOf(Preview::class, $preview);
+        $this->assertInstanceOf(PreviewBuilder::class, $previewBuilder);
     }
 }
