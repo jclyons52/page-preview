@@ -11,12 +11,12 @@ class MetaTest extends TestCase
     {
         $meta = $this->getMetaInstance();
 
-        $og = $meta->og();
+        $og = $meta->unFlatten()['og'];
 
         $expected = [
-            "og:title" => "Meta title",
-            "og:description" => "Foo bar bar foo",
-            "og:url" => "http://www.example.com",
+            "title" => "Meta title",
+            "description" => "Foo bar bar foo",
+            "url" => "http://www.example.com",
         ];
 
         $this->assertEquals($expected, $og);
@@ -69,7 +69,7 @@ class MetaTest extends TestCase
 
         $meta = new Meta($original);
 
-        $twitterCard = $meta->twitter();
+        $twitterCard = $meta->unFlatten()['twitter'];
 
         $this->assertEquals($expected, $twitterCard);
     }

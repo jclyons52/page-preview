@@ -4,28 +4,6 @@ namespace Jclyons52\PagePreview;
 
 class Meta extends \ArrayObject
 {
-    public function og()
-    {
-        foreach ($this as $key => $value) {
-            if (strpos($key, 'og:') > -1) {
-                $result[$key] = $value;
-            }
-        }
-        return $result;
-    }
-
-    public function twitter()
-    {
-        $result = [];
-        foreach ($this as $key => $value) {
-            if (strpos($key, 'twitter:') > -1) {
-                $result[$key] = $value;
-            }
-        }
-        $result = $this->unFlatten($result);
-        return $result['twitter'];
-    }
-
     public function unFlatten($array = null)
     {
         if ($array === null) {
