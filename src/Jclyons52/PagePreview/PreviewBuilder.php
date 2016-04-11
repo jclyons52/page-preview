@@ -46,8 +46,7 @@ class PreviewBuilder
 
         return new static($client);
     }
-
-
+    
     /**
      * @param string $url
      * @return Document
@@ -143,10 +142,8 @@ class PreviewBuilder
     }
 
     /**
-     * returns a string of the link preview html
-     * @param  string $type     template name to be selected
-     * @param  string $viewPath path to templates folder
-     * @return string           html for link preview
+     * returns an instance of Preview
+     * @return Preview
      */
     public function getPreview()
     {

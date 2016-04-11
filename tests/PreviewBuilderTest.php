@@ -121,7 +121,7 @@ class PreviewBuilderTest extends TestCase
     /**
      * @test
      */
-    public function it_returns_empty_array_if_there_is_no_meta()
+    public function it_returns_empty_array_object_if_there_is_no_meta()
     {
         $client = $this->getMockClient(__DIR__ . '/data/noMeta.html');
 
@@ -131,7 +131,7 @@ class PreviewBuilderTest extends TestCase
 
         $meta = $preview->meta;
 
-        $this->assertEquals([], $meta);
+        $this->assertTrue($meta->count() === 0);
     }
 
     /**

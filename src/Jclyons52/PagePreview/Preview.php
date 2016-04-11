@@ -28,7 +28,7 @@ class Preview
         
         $this->images = $data['images'];
         
-        $this->meta = $data['meta'];
+        $this->meta = new Meta($data['meta']);
         
         $this->viewPath = __DIR__ . '/Templates';
     }
@@ -59,6 +59,7 @@ class Preview
     {
 
         $title = $this->title;
+
         if (array_key_exists('title', $this->meta)) {
             $title = $this->meta['title'];
         }
