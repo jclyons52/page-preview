@@ -21,7 +21,10 @@ class MediaTest extends TestCase
 
         foreach ($youtubeUrls as $url) {
             $videos = Media::get($url);
-            $this->assertEquals(['https://www.youtube.com/embed/EIQQnoeepgU'], $videos);
+            $this->assertEquals([
+                'thumbnail' => "http://i2.ytimg.com/vi/EIQQnoeepgU/default.jpg",
+                'url' => 'https://www.youtube.com/embed/EIQQnoeepgU'
+            ], $videos);
         }
     }
 
@@ -32,5 +35,39 @@ class MediaTest extends TestCase
     {
         $videos = Media::get('http://youtu.foo/bar ');
         $this->assertEquals([], $videos);
+    }
+
+    /**
+     * @test
+     */
+    public function it_gets_vimeo_media()
+    {
+        $vimeoUrls = [
+            'https://vimeo.com/11111111',
+            'http://vimeo.com/11111111',
+            'https://www.vimeo.com/11111111',
+            'http://www.vimeo.com/11111111',
+            'https://vimeo.com/channels/11111111',
+            'http://vimeo.com/channels/11111111',
+            'https://vimeo.com/groups/name/videos/11111111',
+            'http://vimeo.com/groups/name/videos/11111111',
+            'https://vimeo.com/album/2222222/video/11111111',
+            'http://vimeo.com/album/2222222/video/11111111',
+            'https://vimeo.com/11111111?param=test',
+            'http://vimeo.com/11111111?param=test',
+        ];
+        foreach ($vimeoUrls as $url) {
+            $videos = MediaMock::get($url);
+            $this->assertEquals("http://i.vimeocdn.com/video/564612660_640.jpg", $videos['thumbnail']);
+            $this->assertEquals("http://player.vimeo.com/video/11111111", $videos['url']);
+        }
+    }
+}
+
+class MediaMock extends Media 
+{
+    protected static function fetch($url)
+    {
+        return json_decode(file_get_contents(__DIR__ .'/data/API/vimeo.json'));
     }
 }
