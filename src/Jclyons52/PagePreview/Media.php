@@ -8,7 +8,9 @@ class Media
     {
         if (strpos($url, "youtu") !== false) {
             $link = static::youtubeFormat($url);
-            if($link !== false) return $link;
+            if ($link !== false) {
+                return $link;
+            }
         }
         if (strpos($url, "vimeo") !== false) {
             return static::vimeoFormat($url);
@@ -23,7 +25,8 @@ class Media
     private static function youtubeFormat($url)
     {
         $id = null;
-        $re = "/https?:\\/\\/(?:www\\.)?youtu(?:be\\.com\\/(watch\\?)?(.*?&?)?v=|\\.be\\/)([\\w\\-]+)(&(amp;)?[\\w\\?=]*)?/i";
+        $re = "/https?:\\/\\/(?:www\\.)?youtu(?:be\\.com\\/(watch\\?)?".
+            "(.*?&?)?v=|\\.be\\/)([\\w\\-]+)(&(amp;)?[\\w\\?=]*)?/i";
         if (preg_match($re, $url, $matching)) {
             $id = $matching[3];
         } else {
@@ -50,7 +53,9 @@ class Media
      */
     private static function vimeoFormat($url)
     {
-        $re = "/https?:\\/\\/(?:www\\.|player\\.)?vimeo.com\\/(?:channels\\/(?:\\w+\\/)?|groups\\/([^\\/]*)\\/videos\\/|album\\/(\\d+)\\/video\\/|video\\/|)(\\d+)(?:$|\\/|\\?)?/";
+        $re = "/https?:\\/\\/(?:www\\.|player\\.)?vimeo.com\\/" .
+            "(?:channels\\/(?:\\w+\\/)?|groups\\/([^\\/]*)\\/videos\\/".
+            "|album\\/(\\d+)\\/video\\/|video\\/|)(\\d+)(?:$|\\/|\\?)?/";
         preg_match_all($re, $url, $matches);
 
         if (!$matches[3]) {
