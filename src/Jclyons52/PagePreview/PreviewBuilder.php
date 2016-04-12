@@ -49,7 +49,7 @@ class PreviewBuilder
     
     /**
      * @param string $url
-     * @return Document
+     * @return Preview
      * @throws \Exception
      */
     public function fetch($url)
@@ -188,7 +188,7 @@ class PreviewBuilder
     }
 
     /**
-     * @param $metaTags
+     * @param \Jclyons52\PHPQuery\Support\NodeCollection $metaTags
      * @return array
      */
     private function metaTagsToArray($metaTags)
