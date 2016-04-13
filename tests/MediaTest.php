@@ -62,6 +62,15 @@ class MediaTest extends TestCase
             $this->assertEquals("http://player.vimeo.com/video/11111111", $videos['url']);
         }
     }
+
+    /**
+     * @test
+     */
+    public function it_returns_empty_array_if_vimeo_media_not_found()
+    {
+        $videos = Media::get('http://vimeo.foo/bar ');
+        $this->assertEquals([], $videos);
+    }
 }
 
 class MediaMock extends Media 

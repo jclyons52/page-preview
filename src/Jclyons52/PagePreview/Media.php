@@ -13,7 +13,10 @@ class Media
             }
         }
         if (strpos($url, "vimeo") !== false) {
-            return static::vimeoFormat($url);
+            $link = static::vimeoFormat($url);
+            if ($link !== false) {
+                return $link;
+            }
         }
         return [];
     }
@@ -35,7 +38,6 @@ class Media
                 $id = $matching[1];
             }
         }
-
         if ($id !== null) {
             return [
                 'url' => 'https://www.youtube.com/embed/' . $id,
@@ -61,7 +63,6 @@ class Media
         if (!$matches[3]) {
             return false;
         }
-
         $imgId = $matches[3][0];
 
         $hash = static::fetch("http://vimeo.com/api/v2/video/{$imgId}.json");
