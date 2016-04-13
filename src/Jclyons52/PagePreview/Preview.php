@@ -16,6 +16,8 @@ class Preview
 
     public $meta;
     
+    public $media = false;
+    
     private $viewPath;
     
     public function __construct($data)
@@ -29,6 +31,12 @@ class Preview
         $this->images = $data['images'];
         
         $this->meta = new Meta($data['meta']);
+
+        $media = Media::get($data['url']);
+        
+        if ($media !== []) {
+            $this->media = $media;
+        }
         
         $this->viewPath = __DIR__ . '/Templates';
     }
@@ -72,6 +80,7 @@ class Preview
             'description' => $this->description,
             'url' => $this->url,
             'meta' => $this->meta,
+            'media' => $this->media,
         ];
     }
 

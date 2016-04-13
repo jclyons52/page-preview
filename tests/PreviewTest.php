@@ -88,6 +88,23 @@ class PreviewTest extends TestCase
         $this->assertJsonStringEqualsJsonString(json_encode($this->previewData()), $json);
     }
 
+    /**
+     * @test
+     */
+    public function it_gets_media_when_available()
+    {
+        $data = $this->previewData();
+
+        $data['url'] = 'http://youtu.be/EIQQnoeepgU';
+
+        $preview = new Preview($data);
+
+        $this->assertEquals([
+            'thumbnail' => "http://i2.ytimg.com/vi/EIQQnoeepgU/default.jpg",
+                'url' => 'https://www.youtube.com/embed/EIQQnoeepgU'
+            ], $preview->media);
+    }
+
     public function previewData()
     {
          return [
@@ -104,7 +121,8 @@ class PreviewTest extends TestCase
                     "keywords" => ["test", "thing", "stuff"],
                     "apple-mobile-web-app-capable" => "yes",
                     "viewport" => "minimal-ui",
-                ]
+                ],
+             "media" => false,
             ];
     }
 }
