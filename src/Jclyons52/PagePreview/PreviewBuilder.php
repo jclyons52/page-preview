@@ -2,7 +2,6 @@
 
 namespace Jclyons52\PagePreview;
 
-use GuzzleHttp\Client;
 use Jclyons52\PHPQuery\Document;
 
 class PreviewBuilder
@@ -25,6 +24,8 @@ class PreviewBuilder
      * @var array
      */
     protected $urlComponents;
+
+    protected $http;
 
     public function __construct(HttpInterface $http)
     {
