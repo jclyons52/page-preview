@@ -4,6 +4,11 @@ namespace Jclyons52\PagePreview;
 
 class Media
 {
+    /**
+     * @var HttpInterface
+     */
+    protected $http;
+    
     public function __construct(HttpInterface $http)
     {
         $this->http = $http;
