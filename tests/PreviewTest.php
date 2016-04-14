@@ -9,7 +9,7 @@ class PreviewTest extends TestCase
      */
     public function it_renders_a_preview()
     {
-        $previewBuilder = new PreviewBuilder($this->client);
+        $previewBuilder = $this->previewBuilder;
 
         $preview = $previewBuilder->fetch('http://www.example.com');
 
@@ -23,9 +23,7 @@ class PreviewTest extends TestCase
      */
     public function it_renders_a_preview_without_meta()
     {
-        $client = $this->getMockClient(__DIR__ . '/data/noMeta.html');
-
-        $previewBuilder = new PreviewBuilder($client);
+        $previewBuilder = $this->getMockPreviewBuilder(__DIR__ . '/data/noMeta.html');
 
         $preview = $previewBuilder->fetch('http://www.example.com');
 
@@ -39,9 +37,7 @@ class PreviewTest extends TestCase
      */
     public function it_renders_page_without_image()
     {
-        $client = $this->getMockClient(__DIR__ . '/data/noImages.html');
-
-        $previewBuilder = new PreviewBuilder($client);
+        $previewBuilder = $this->getMockPreviewBuilder(__DIR__ . '/data/noImages.html');
 
         $preview = $previewBuilder->fetch('http://www.example.com');
 
@@ -55,7 +51,7 @@ class PreviewTest extends TestCase
      */
     public function it_renders_templates_dynamically()
     {
-        $previewBuilder = new PreviewBuilder($this->client);
+        $previewBuilder = $this->previewBuilder;
 
         $preview = $previewBuilder->fetch('http://www.example.com');
 
@@ -69,7 +65,7 @@ class PreviewTest extends TestCase
      */
     public function it_renders_custom_templates()
     {
-        $preview = new Preview($this->previewData());
+        $preview = new Preview(new Media(new MainHttpInterfaceMock('foo/bar')), $this->previewData());
 
         $preview->setViewPath(__DIR__ . '/data/customTemplates');
 
@@ -81,7 +77,7 @@ class PreviewTest extends TestCase
      */
     public function it_converts_preview_to_json()
     {
-        $preview = new Preview($this->previewData());
+        $preview = new Preview(new Media(new MainHttpInterfaceMock('foo/bar')), $this->previewData());
 
         $json = $preview->toJson();
 
@@ -97,7 +93,7 @@ class PreviewTest extends TestCase
 
         $data['url'] = 'http://youtu.be/EIQQnoeepgU';
 
-        $preview = new Preview($data);
+        $preview = new Preview(new Media(new MainHttpInterfaceMock('foo/bar')), $data);
 
         $this->assertEquals([
             'thumbnail' => "http://i2.ytimg.com/vi/EIQQnoeepgU/default.jpg",

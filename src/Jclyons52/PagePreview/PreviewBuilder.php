@@ -7,11 +7,6 @@ use Jclyons52\PHPQuery\Document;
 
 class PreviewBuilder
 {
-    /**
-     * Guzzle client
-     * @var \GuzzleHttp\Client
-     */
-    protected $client;
 
     /**
      * PHPQuery document object that will be used to select elements
@@ -31,9 +26,9 @@ class PreviewBuilder
      */
     protected $urlComponents;
 
-    public function __construct(Client $client)
+    public function __construct(HttpInterface $http)
     {
-        $this->client = $client;
+        $this->http = $http;
     }
 
     /**
@@ -42,9 +37,8 @@ class PreviewBuilder
      */
     public static function create()
     {
-        $client = new Client();
-
-        return new static($client);
+        $http = new Http();
+        return new PreviewBuilder($http);
     }
     
     /**
@@ -63,9 +57,11 @@ class PreviewBuilder
         }
         $this->urlComponents = $urlComponents;
 
-        $result = $this->client->request('GET', $url);
+        $body = $this->http->get($url);
 
-        $body = $result->getBody()->getContents();
+        if ($body === false) {
+            throw new \Exception('failed to load page');
+        }
 
         $this->document = new Document($body);
 
@@ -132,7 +128,6 @@ class PreviewBuilder
         if ($images === []) {
             return [];
         }
-
         $urls = $images->attr('src');
         $result = [];
         foreach ($urls as $url) {
@@ -161,7 +156,9 @@ class PreviewBuilder
             $meta['keywords'] = $keywords;
         }
 
-        return new Preview([
+        $media = new Media($this->http);
+        
+        return new Preview($media, [
             'title' => $title,
             'images' => $images,
             'description' => $description,

@@ -9,7 +9,7 @@ class PreviewBuilderTest extends TestCase
      */
     public function it_fetches_page()
     {
-        $previewBuilder = new PreviewBuilder($this->client);
+        $previewBuilder = $this->previewBuilder;
 
         $preview = $previewBuilder->fetch('http://www.example.com');
 
@@ -21,9 +21,7 @@ class PreviewBuilderTest extends TestCase
      */
     public function it_throws_error_if_request_fails()
     {
-        $this->client->request('GET', 'http://www.example.com');
-
-        $previewBuilder = new PreviewBuilder($this->client);
+        $previewBuilder = $this->getMockPreviewBuilder('foo.com/bar/foo.html');
 
         $this->setExpectedException(\Exception::class);
 
@@ -35,7 +33,7 @@ class PreviewBuilderTest extends TestCase
      */
     public function it_throws_error_if_url_is_not_valid()
     {
-        $previewBuilder = new PreviewBuilder($this->client);
+        $previewBuilder = $this->previewBuilder;
 
         $this->setExpectedException(\Exception::class);
 
@@ -47,7 +45,7 @@ class PreviewBuilderTest extends TestCase
      */
     public function it_gets_the_page_title()
     {
-        $previewBuilder = new PreviewBuilder($this->client);
+        $previewBuilder = $this->previewBuilder;
 
         $preview = $previewBuilder->fetch('http://www.example.com');
 
@@ -59,7 +57,7 @@ class PreviewBuilderTest extends TestCase
      */
     public function it_gets_the_meta_description()
     {
-        $previewBuilder = new PreviewBuilder($this->client);
+        $previewBuilder = $this->previewBuilder;
 
         $preview = $previewBuilder->fetch('http://www.example.com');
 
@@ -71,7 +69,7 @@ class PreviewBuilderTest extends TestCase
      */
     public function it_gets_the_meta_keywords()
     {
-        $previewBuilder = new PreviewBuilder($this->client);
+        $previewBuilder = $this->previewBuilder;
 
         $preview = $previewBuilder->fetch('http://www.example.com');
 
@@ -83,7 +81,7 @@ class PreviewBuilderTest extends TestCase
      */
     public function it_gets_the_meta_title()
     {
-        $previewBuilder = new PreviewBuilder($this->client);
+        $previewBuilder = $this->previewBuilder;
 
         $preview = $previewBuilder->fetch('http://www.example.com');
 
@@ -107,7 +105,7 @@ class PreviewBuilderTest extends TestCase
             "viewport" => "minimal-ui",
         ];
 
-        $previewBuilder = new PreviewBuilder($this->client);
+        $previewBuilder = $this->previewBuilder;
 
         $preview = $previewBuilder->fetch('http://www.example.com');
 
@@ -123,9 +121,7 @@ class PreviewBuilderTest extends TestCase
      */
     public function it_returns_empty_array_object_if_there_is_no_meta()
     {
-        $client = $this->getMockClient(__DIR__ . '/data/noMeta.html');
-
-        $previewBuilder = new PreviewBuilder($client);
+        $previewBuilder = $this->getMockPreviewBuilder(__DIR__ . '/data/noMeta.html');
 
         $preview = $previewBuilder->fetch('http://www.example.com');
 
@@ -139,7 +135,7 @@ class PreviewBuilderTest extends TestCase
      */
     public function it_gets_all_images()
     {
-        $previewBuilder = new PreviewBuilder($this->client);
+        $previewBuilder = $this->previewBuilder;
 
         $preview = $previewBuilder->fetch('http://www.example.com/directory');
 

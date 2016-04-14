@@ -20,7 +20,6 @@
     ],
     "require": {
         "php" : "~5.5|~7.0",
-        "guzzlehttp/guzzle": "~6.0",
         "jclyons52/php-query": "^1.0@dev",
         "league/plates": "^3.1"
     },
