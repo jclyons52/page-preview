@@ -20,7 +20,7 @@ class MediaTest extends TestCase
         ];
 
         foreach ($youtubeUrls as $url) {
-            $media = new Media(new HttpInterfaceMock());
+            $media = new Media(new MainHttpInterfaceMock(__DIR__ .'/data/API/vimeo.json'));
             $videos = $media->get($url);
             $this->assertEquals([
                 'thumbnail' => "http://i2.ytimg.com/vi/EIQQnoeepgU/default.jpg",
@@ -34,7 +34,7 @@ class MediaTest extends TestCase
      */
     public function it_returns_empty_array_if_media_is_not_found()
     {
-        $media = new Media(new HttpInterfaceMock());
+        $media = new Media(new MainHttpInterfaceMock(__DIR__ .'/data/API/vimeo.json'));
         $videos = $media->get('http://youtu.foo/bar ');
         $this->assertEquals([], $videos);
     }
@@ -59,7 +59,7 @@ class MediaTest extends TestCase
             'http://vimeo.com/11111111?param=test',
         ];
         foreach ($vimeoUrls as $url) {
-            $media = new Media(new HttpInterfaceMock());
+            $media = new Media(new MainHttpInterfaceMock(__DIR__ .'/data/API/vimeo.json'));
             $videos = $media->get($url);
             $this->assertEquals("http://i.vimeocdn.com/video/564612660_640.jpg", $videos['thumbnail']);
             $this->assertEquals("http://player.vimeo.com/video/11111111", $videos['url']);
@@ -71,16 +71,8 @@ class MediaTest extends TestCase
      */
     public function it_returns_empty_array_if_vimeo_media_not_found()
     {
-        $media = new Media(new HttpInterfaceMock());
+        $media = new Media(new MainHttpInterfaceMock(__DIR__ .'/data/API/vimeo.json'));
         $videos = $media->get('http://vimeo.foo/bar ');
         $this->assertEquals([], $videos);
-    }
-}
-
-class HttpInterfaceMock implements HttpInterface
-{
-    public function get($url)
-    {
-        return json_decode(file_get_contents(__DIR__ .'/data/API/vimeo.json'));
     }
 }

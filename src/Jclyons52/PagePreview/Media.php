@@ -74,7 +74,7 @@ class Media
         }
         $imgId = $matches[3][0];
 
-        $hash = $this->http->get("http://vimeo.com/api/v2/video/{$imgId}.json");
+        $hash = json_decode($this->http->get("http://vimeo.com/api/v2/video/{$imgId}.json"));
 
         return [
             'url'        => "http://player.vimeo.com/video/{$imgId}",
