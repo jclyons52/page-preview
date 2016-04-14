@@ -20,7 +20,7 @@ class Preview
     
     private $viewPath;
     
-    public function __construct($data)
+    public function __construct(Media $mediaObj, $data)
     {
         $this->url = $data['url'];
         
@@ -32,7 +32,7 @@ class Preview
         
         $this->meta = new Meta($data['meta']);
 
-        $media = Media::get($data['url']);
+        $media = $mediaObj->get($data['url']);
         
         if ($media !== []) {
             $this->media = $media;

@@ -4,16 +4,21 @@ namespace Jclyons52\PagePreview;
 
 class Media
 {
-    public static function get($url)
+    public function __construct(HttpInterface $http)
+    {
+        $this->http = $http;
+    }
+
+    public function get($url)
     {
         if (strpos($url, "youtu") !== false) {
-            $link = static::youtubeFormat($url);
+            $link = $this->youtubeFormat($url);
             if ($link !== false) {
                 return $link;
             }
         }
         if (strpos($url, "vimeo") !== false) {
-            $link = static::vimeoFormat($url);
+            $link = $this->vimeoFormat($url);
             if ($link !== false) {
                 return $link;
             }
@@ -25,7 +30,7 @@ class Media
      * @param $url
      * @return array|bool
      */
-    private static function youtubeFormat($url)
+    private function youtubeFormat($url)
     {
         $id = null;
         $re = "/https?:\\/\\/(?:www\\.)?youtu(?:be\\.com\\/(watch\\?)?".
@@ -44,7 +49,6 @@ class Media
                 'thumbnail' => "http://i2.ytimg.com/vi/{$id}/default.jpg",
             ];
         }
-
         return false;
     }
 
@@ -53,7 +57,7 @@ class Media
      * @param $matches
      * @return array
      */
-    private static function vimeoFormat($url)
+    private function vimeoFormat($url)
     {
         $re = "/https?:\\/\\/(?:www\\.|player\\.)?vimeo.com\\/" .
             "(?:channels\\/(?:\\w+\\/)?|groups\\/([^\\/]*)\\/videos\\/".
@@ -65,20 +69,11 @@ class Media
         }
         $imgId = $matches[3][0];
 
-        $hash = static::fetch("http://vimeo.com/api/v2/video/{$imgId}.json");
+        $hash = $this->http->get("http://vimeo.com/api/v2/video/{$imgId}.json");
 
         return [
             'url'        => "http://player.vimeo.com/video/{$imgId}",
             'thumbnail' => $hash[0]->thumbnail_large,
         ];
-    }
-
-    /**
-     * @param $url
-     * @return mixed
-     */
-    protected static function fetch($url)
-    {
-        return json_decode(file_get_contents($url));
     }
 }
