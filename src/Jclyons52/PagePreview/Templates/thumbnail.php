@@ -1,7 +1,16 @@
+<?php
+// @codingStandardsIgnoreStart
+?>
 <div class="row">
-    <div class="col-sm-6 col-md-4">
+    <div class="col-xs-12">
         <div class="thumbnail">
-            <img src="<?= $images[0] ?>" alt="...">
+            <? if ($media) : ?>
+                <div class="embed-responsive embed-responsive-16by9">
+                    <iframe class="embed-responsive-item" src="<?= $media['url'] ?>"></iframe>
+                </div>
+            <? else : ?>
+                <img src="<?= $images[0] ?>" alt="<?= $title ?>">
+            <? endif; ?>
             <div class="caption">
                 <h3><?= $title ?></h3>
                 <p><?= $description ?></p>
@@ -10,3 +19,6 @@
         </div>
     </div>
 </div>
+<?php
+// @codingStandardsIgnoreEnd
+?>

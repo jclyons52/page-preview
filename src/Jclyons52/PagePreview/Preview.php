@@ -53,9 +53,18 @@ class Preview
      * @param string $type
      * @return string
      */
-    public function render($type = 'media')
+    public function render($type = null)
     {
         $templates = new Engine($this->viewPath);
+
+        if ($type === null) {
+            if ($this->media === false) {
+                $type = 'media';
+            } else {
+                $type = 'thumbnail';
+            }
+
+        }
 
         return $templates->render($type, $this->toArray());
     }

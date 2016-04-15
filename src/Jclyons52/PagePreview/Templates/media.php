@@ -5,7 +5,7 @@
     <?php if ($images[0]) : ?>
         <div class="media-left">
             <a href="<?= $url ?>">
-                <img class="media-object" src="<?= $images[0] ?>" alt="<?= $title ?>">
+                <img class="media-object" height="100px" src="<?= $images[0] ?>" alt="<?= $title ?>">
             </a>
         </div>
     <?php endif; ?>

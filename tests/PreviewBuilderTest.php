@@ -141,7 +141,16 @@ class PreviewBuilderTest extends TestCase
 
         $images = $preview->images;
 
-        //relative path test
+        $this->assertEquals('http://www.example.com/directory/files/mobile/1_magbrowser.jpg', $images[0]);
+
+        $this->assertEquals('https://thing.com/image.jpg', $images[1]);
+
+        $this->assertEquals('http://www.example.com/images/img2.png', $images[2]);
+
+        $preview = $previewBuilder->fetch('http://www.example.com/directory/');
+
+        $images = $preview->images;
+        
         $this->assertEquals('http://www.example.com/directory/files/mobile/1_magbrowser.jpg', $images[0]);
 
         $this->assertEquals('https://thing.com/image.jpg', $images[1]);

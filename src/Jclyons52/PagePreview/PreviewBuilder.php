@@ -185,7 +185,11 @@ class PreviewBuilder
         if (substr($url, 0, 1) === '/') {
             return 'http://' . $this->urlComponents['host'] . $url;
         }
-        return 'http://' . $this->urlComponents['host'] .$path . '/' . $url;
+
+        $host = trim($this->urlComponents['host'], '/') . '/';
+        $path = trim($path, '/') . '/';
+
+        return 'http://' . $host . $path . $url;
     }
 
     /**
