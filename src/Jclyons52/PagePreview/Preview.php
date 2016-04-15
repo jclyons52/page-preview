@@ -63,7 +63,6 @@ class Preview
             } else {
                 $type = 'thumbnail';
             }
-
         }
 
         return $templates->render($type, $this->toArray());

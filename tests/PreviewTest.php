@@ -101,6 +101,22 @@ class PreviewTest extends TestCase
             ], $preview->media);
     }
 
+    /**
+     * @test
+     */
+    public function it_renders_thumbnail_template_for_videos()
+    {
+        $data = $this->previewData();
+
+        $data['url'] = 'http://youtu.be/EIQQnoeepgU';
+
+        $preview = new Preview(new Media(new MainHttpInterfaceMock('foo/bar')), $data);
+
+        $preview = $preview->render();
+
+        $this->assertContains('<div class="embed-responsive embed-responsive-16by9">', $preview);
+    }
+
     public function previewData()
     {
          return [
