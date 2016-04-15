@@ -161,6 +161,20 @@ class PreviewBuilderTest extends TestCase
     /**
      * @test
      */
+    public function it_renders_base64_images()
+    {
+        $previewBuilder = $this->previewBuilder;
+
+        $preview = $previewBuilder->fetch('http://www.example.com/directory');
+
+        $images = $preview->images;
+
+        $this->assertEquals('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIA...', $images[3]);
+    }
+
+    /**
+     * @test
+     */
     public function it_creates_a_new_instance_with_dependencies()
     {
         $previewBuilder = PreviewBuilder::create();

@@ -177,6 +177,10 @@ class PreviewBuilder
      */
     private function formatUrl($url)
     {
+        if (substr($url, 0, 5) === "data:") {
+            return $url;
+        }
+
         $path = array_key_exists('path', $this->urlComponents) ? $this->urlComponents['path'] : '';
 
         if (filter_var($url, FILTER_VALIDATE_URL) !== false) {
