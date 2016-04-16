@@ -52,14 +52,7 @@ class PreviewBuilder
      */
     public function fetch($url)
     {
-        $this->url = $url;
-
-        $urlComponents = parse_url($url);
-
-        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-            throw new \Exception("url {$this->url} is invalid");
-        }
-        $this->urlComponents = $urlComponents;
+        $this->url = new Url($url);
 
         $body = $this->http->get($url);
 
@@ -135,7 +128,7 @@ class PreviewBuilder
         $urls = $images->attr('src');
         $result = [];
         foreach ($urls as $url) {
-            $result[] = $this->formatUrl($url);
+            $result[] = $this->url->formatRelativeToAbsolute($url);
         }
         return $result;
     }
@@ -166,34 +159,9 @@ class PreviewBuilder
             'title' => $title,
             'images' => $images,
             'description' => $description,
-            'url' => $this->url,
+            'url' => $this->url->original,
             'meta' => $meta,
         ]);
-    }
-
-    /**
-     * @param string $url
-     * @return string
-     */
-    private function formatUrl($url)
-    {
-        if (substr($url, 0, 5) === "data:") {
-            return $url;
-        }
-
-        $path = array_key_exists('path', $this->urlComponents) ? $this->urlComponents['path'] : '';
-
-        if (filter_var($url, FILTER_VALIDATE_URL) !== false) {
-            return $url;
-        }
-        if (substr($url, 0, 1) === '/') {
-            return 'http://' . $this->urlComponents['host'] . $url;
-        }
-
-        $host = trim($this->urlComponents['host'], '/') . '/';
-        $path = trim($path, '/') . '/';
-
-        return 'http://' . $host . $path . $url;
     }
 
     /**
@@ -214,7 +182,6 @@ class PreviewBuilder
             }
             $values[$name] = $content;
         }
-
         return $values;
     }
 }
