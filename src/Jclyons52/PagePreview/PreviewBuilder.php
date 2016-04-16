@@ -11,11 +11,11 @@ class PreviewBuilder
      * PHPQuery document object that will be used to select elements
      * @var \Jclyons52\PHPQuery\Document
      */
-    public $document;
+    public $crawler;
 
     /**
-     * reference to the url parameter the user passes into the fetch method
-     * @var string
+     * Url object
+     * @var Url
      */
     public $url;
 
@@ -30,6 +30,7 @@ class PreviewBuilder
      */
     protected $http;
 
+    
     public function __construct(HttpInterface $http)
     {
         $this->http = $http;
@@ -60,77 +61,11 @@ class PreviewBuilder
             throw new \Exception('failed to load page');
         }
 
-        $this->document = new Document($body);
+        $document = new Document($body);
+
+        $this->crawler = new Crawler($document);
 
         return $this->getPreview();
-    }
-
-    /**
-     * @return string
-     */
-    public function title()
-    {
-        return $this->document->querySelector('title')->text();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function metaKeywords()
-    {
-        $keywordsElement = $this->document->querySelector('meta[name="keywords"]');
-
-        if (!$keywordsElement) {
-            return [];
-        }
-
-        $keywordString = $keywordsElement->attr('content');
-
-        $keywords = explode(',', $keywordString);
-
-        return array_map(function ($word) {
-            return trim($word);
-
-        }, $keywords);
-    }
-
-    /**
-     * @param string $element
-     * @return array
-     */
-    public function meta($element = null)
-    {
-        $selector = "meta";
-        if ($element !== null) {
-            $selector .= "[name='{$element}']";
-            $metaTags =  $this->document->querySelector($selector);
-            if ($metaTags === null) {
-                return null;
-            }
-            return  $metaTags->attr('content');
-        }
-        $metaTags = $this->document->querySelectorAll($selector);
-
-        return $this->metaTagsToArray($metaTags);
-    }
-
-    /**
-     * get source attributes of all image tags on the page
-     * @return array<String>
-     */
-    public function images()
-    {
-        $images = $this->document->querySelectorAll('img');
-
-        if ($images === []) {
-            return [];
-        }
-        $urls = $images->attr('src');
-        $result = [];
-        foreach ($urls as $url) {
-            $result[] = $this->url->formatRelativeToAbsolute($url);
-        }
-        return $result;
     }
 
     /**
@@ -139,15 +74,15 @@ class PreviewBuilder
      */
     public function getPreview()
     {
-        $title = $this->title();
+        $title = $this->crawler->title();
 
         $images = $this->images();
 
-        $description = $this->meta('description');
+        $description = $this->crawler->meta('description');
 
-        $meta = $this->meta();
+        $meta = $this->crawler->meta();
 
-        $keywords =  $this->metaKeywords();
+        $keywords =  $this->crawler->metaKeywords();
 
         if ($keywords !== []) {
             $meta['keywords'] = $keywords;
@@ -164,24 +99,13 @@ class PreviewBuilder
         ]);
     }
 
-    /**
-     * @param \Jclyons52\PHPQuery\Support\NodeCollection $metaTags
-     * @return array
-     */
-    private function metaTagsToArray($metaTags)
+    public function images()
     {
-        $values = [];
-        foreach ($metaTags as $meta) {
-            $name = $meta->attr('name');
-            if ($name === '') {
-                $name = $meta->attr('property');
-            }
-            $content = $meta->attr('content');
-            if ($name === '' || $content == '') {
-                continue;
-            }
-            $values[$name] = $content;
+        $urls = $this->crawler->images();
+        $result = [];
+        foreach ($urls as $url) {
+            $result[] = $this->url->formatRelativeToAbsolute($url);
         }
-        return $values;
+        return $result;
     }
 }

@@ -34,14 +34,14 @@ class UrlTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(['http://example.com', 'https://other-site.com.au'], [$urls[0]->original, $urls[1]->original]);
     }
-    
+
     /**
      * @test
      */
     public function it_can_parse_a_url()
     {
         $url = new Url('https://example.com/foo/bar/');
-        
+
         $this->assertEquals(['scheme' => 'https', 'host' => 'example.com', 'path' => '/foo/bar/'], $url->components);
     }
 
@@ -59,5 +59,51 @@ class UrlTest extends \PHPUnit_Framework_TestCase
         $url = Url::findall($text);
 
         $this->assertEquals(null, $url);
+    }
+
+    /**
+     * @test
+     */
+    public function it_throws_error_if_url_is_not_valid()
+    {
+
+        $this->setExpectedException(\Exception::class);
+
+        new Url('fooBar');
+    }
+
+    /**
+     * @test
+     */
+    public function it_converts_relative_paths_to_absolute()
+    {
+
+        $url = new Url('http://www.example.com/directory');
+
+        $results = [
+            'http://www.example.com/directory/files/mobile/1_magbrowser.jpg' => $url->formatRelativeToAbsolute("files/mobile/1_magbrowser.jpg"),
+
+            'https://thing.com/image.jpg' => $url->formatRelativeToAbsolute("https://thing.com/image.jpg"),
+
+            'http://www.example.com/images/img2.png' => $url->formatRelativeToAbsolute( "/images/img2.png")
+        ];
+
+        foreach ($results as $expected => $actual) {
+            $this->assertEquals($expected, $actual);
+        }
+
+        $url = new Url('http://www.example.com/directory/');
+
+        $results = [
+            'http://www.example.com/directory/files/mobile/1_magbrowser.jpg' => $url->formatRelativeToAbsolute("files/mobile/1_magbrowser.jpg"),
+
+            'https://thing.com/image.jpg' => $url->formatRelativeToAbsolute("https://thing.com/image.jpg"),
+
+            'http://www.example.com/images/img2.png' => $url->formatRelativeToAbsolute( "/images/img2.png")
+        ];
+
+        foreach ($results as $expected => $actual) {
+            $this->assertEquals($expected, $actual);
+        }
     }
 }
