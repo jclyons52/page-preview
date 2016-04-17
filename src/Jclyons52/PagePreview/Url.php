@@ -5,7 +5,11 @@ namespace Jclyons52\PagePreview;
 class Url
 {
     public $original;
-    
+
+    /**
+     * destructured array of url components from parse_url
+     * @var array
+     */
     public $components;
     
     public function __construct($url)

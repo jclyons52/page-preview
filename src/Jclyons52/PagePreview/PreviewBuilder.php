@@ -6,10 +6,8 @@ use Jclyons52\PHPQuery\Document;
 
 class PreviewBuilder
 {
-
     /**
-     * PHPQuery document object that will be used to select elements
-     * @var \Jclyons52\PHPQuery\Document
+     * @var Crawler
      */
     public $crawler;
 
@@ -20,17 +18,11 @@ class PreviewBuilder
     public $url;
 
     /**
-     * destructured array of url components from parse_url
-     * @var array
-     */
-    protected $urlComponents;
-
-    /**
      * @var HttpInterface
      */
     protected $http;
 
-    
+
     public function __construct(HttpInterface $http)
     {
         $this->http = $http;

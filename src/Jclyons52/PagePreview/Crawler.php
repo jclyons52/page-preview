@@ -6,6 +6,10 @@ use Jclyons52\PHPQuery\Document;
 
 class Crawler
 {
+    /**
+     * PHPQuery document object that will be used to select elements
+     * @var \Jclyons52\PHPQuery\Document
+     */
     private $document;
     
     public function __construct(Document $document)
