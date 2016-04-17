@@ -2,20 +2,27 @@
 
 namespace Jclyons52\PagePreview;
 
+use Jclyons52\PagePreview\Cache\Cache;
 use Jclyons52\PHPQuery\Document;
+use Psr\Cache\CacheItemPoolInterface;
 
 class PreviewBuilder
 {
     /**
      * @var Crawler
      */
-    public $crawler;
+    private $crawler;
+
+    /**
+     * @var CacheItemPoolInterface
+     */
+    private $cache;
 
     /**
      * Url object
      * @var Url
      */
-    public $url;
+    private $url;
 
     /**
      * @var HttpInterface
@@ -23,19 +30,23 @@ class PreviewBuilder
     protected $http;
 
 
-    public function __construct(HttpInterface $http)
+    public function __construct(HttpInterface $http, CacheItemPoolInterface $cache = null)
     {
         $this->http = $http;
+        if ($cache !== null) {
+            $this->cache = new Cache($cache);
+        }
     }
 
     /**
      * Instantiate class with dependencies
+     * @param CacheItemPoolInterface $cache
      * @return static
      */
-    public static function create()
+    public static function create(CacheItemPoolInterface $cache = null)
     {
         $http = new Http();
-        return new PreviewBuilder($http);
+        return new PreviewBuilder($http, $cache);
     }
     
     /**
@@ -60,11 +71,24 @@ class PreviewBuilder
         return $this->getPreview();
     }
 
+    public function findOrFetch($url)
+    {
+        if ($this->cache === null) {
+            return $this->fetch($url);
+        }
+
+        return $this->cache->get($url);
+    }
+
+    public function cache(Preview $preview)
+    {
+        $this->cache->set($preview);
+    }
     /**
      * returns an instance of Preview
      * @return Preview
      */
-    public function getPreview()
+    private function getPreview()
     {
         $title = $this->crawler->title();
 
@@ -91,7 +115,7 @@ class PreviewBuilder
         ]);
     }
 
-    public function images()
+    private function images()
     {
         $urls = $this->crawler->images();
         $result = [];

@@ -2,6 +2,8 @@
 
 namespace Jclyons52\PagePreview;
 
+use Stash\Pool;
+
 class PreviewBuilderTest extends TestCase
 {
     /**
@@ -183,10 +185,36 @@ class PreviewBuilderTest extends TestCase
     }
 
     /**
-     * 
+     * @test
      */
     public function it_gets_preview_from_cache()
     {
-        
+        $data = $this->previewData();
+
+        $data['url'] = 'http://www.example.com/directory';
+
+        $previewIn = new Preview(new Media(new MainHttpInterfaceMock('foo/bar')), $data);
+
+        $pool = new Pool();
+
+        $previewBuilder = PreviewBuilder::create($pool);
+
+        $previewBuilder->cache($previewIn);
+
+        $previewOut = $previewBuilder->findOrFetch('http://www.example.com/directory');
+
+        $this->assertEquals($previewIn, $previewOut);
+    }
+
+    /**
+     * @test
+     */
+    public function it_fetches_page_if_not_cached()
+    {
+        $previewBuilder = $this->previewBuilder;
+
+        $preview = $previewBuilder->findOrFetch('http://www.example.com');
+
+        $this->assertInstanceOf(Preview::class, $preview);
     }
 }
