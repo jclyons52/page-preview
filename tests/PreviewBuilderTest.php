@@ -181,4 +181,12 @@ class PreviewBuilderTest extends TestCase
 
         $this->assertInstanceOf(PreviewBuilder::class, $previewBuilder);
     }
+
+    /**
+     * 
+     */
+    public function it_gets_preview_from_cache()
+    {
+        
+    }
 }
