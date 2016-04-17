@@ -24,6 +24,19 @@ class CacheTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(Preview::class, $previewOut);
     }
 
+    /**
+     * @test
+     */
+    public function it_returns_null_if_cache_key_is_not_set()
+    {
+        $pool = new Pool();
+        $cache = new Cache($pool);
+
+        $previewOut = $cache->get("http://www.example.com");
+
+        $this->assertEquals(null, $previewOut);
+    }
+
     public function previewData()
     {
         return [
