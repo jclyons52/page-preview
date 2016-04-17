@@ -8,7 +8,11 @@ class Media
      * @var HttpInterface
      */
     protected $http;
-    
+
+    /**
+     * Media constructor.
+     * @param HttpInterface $http
+     */
     public function __construct(HttpInterface $http)
     {
         $this->http = $http;
