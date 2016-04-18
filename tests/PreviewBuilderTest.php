@@ -207,13 +207,25 @@ class PreviewBuilderTest extends TestCase
     }
 
     /**
-     * @test
+     * @test    
      */
     public function it_fetches_page_if_not_cached()
     {
         $previewBuilder = $this->previewBuilder;
 
         $preview = $previewBuilder->findOrFetch('http://www.example.com');
+
+        $this->assertInstanceOf(Preview::class, $preview);
+    }
+
+    /**
+     * @test
+     */
+    public function it_gets_url_from_text()
+    {
+        $text = "foo bar foo http://www.example.com bar baz";
+        $previewBuilder = $this->previewBuilder;
+        $preview = $previewBuilder->findUrl($text)->fetch();
 
         $this->assertInstanceOf(Preview::class, $preview);
     }
