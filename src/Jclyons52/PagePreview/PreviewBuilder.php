@@ -14,7 +14,7 @@ class PreviewBuilder
     private $crawler;
 
     /**
-     * @var CacheItemPoolInterface
+     * @var Cache
      */
     private $cache;
 
@@ -48,17 +48,25 @@ class PreviewBuilder
         $http = new Http();
         return new PreviewBuilder($http, $cache);
     }
-    
+
     /**
      * @param string $url
      * @return Preview
      * @throws \Exception
      */
-    public function fetch($url)
+    public function fetch($url = null)
     {
-        $this->url = new Url($url);
+        if ($url instanceof Url) {
+            $this->url = $url;
+        }
+        if (is_string($url)) {
+            $this->url = new Url($url);
+        }
+        if ($this->url === null) {
+            throw new \Exception('failed to get url');
+        }
 
-        $body = $this->http->get($url);
+        $body = $this->http->get($this->url->original);
 
         if ($body === false) {
             throw new \Exception('failed to load page');
@@ -69,6 +77,13 @@ class PreviewBuilder
         $this->crawler = new Crawler($document);
 
         return $this->getPreview();
+    }
+
+    public function findUrl($text)
+    {
+        $this->url = Url::findFirst($text);
+
+        return $this;
     }
 
     public function findOrFetch($url)
@@ -105,7 +120,7 @@ class PreviewBuilder
         }
 
         $media = new Media($this->http);
-        
+
         return new Preview($media, [
             'title' => $title,
             'images' => $images,
