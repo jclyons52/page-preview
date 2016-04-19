@@ -6,7 +6,7 @@ use Jclyons52\PagePreview\Cache\Cache;
 use Jclyons52\PHPQuery\Document;
 use Psr\Cache\CacheItemPoolInterface;
 
-class PreviewBuilder
+class PreviewManager
 {
     /**
      * @var Crawler
@@ -46,7 +46,7 @@ class PreviewBuilder
     public static function create(CacheItemPoolInterface $cache = null)
     {
         $http = new Http();
-        return new PreviewBuilder($http, $cache);
+        return new PreviewManager($http, $cache);
     }
 
     /**

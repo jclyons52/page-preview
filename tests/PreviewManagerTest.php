@@ -4,16 +4,16 @@ namespace Jclyons52\PagePreview;
 
 use Stash\Pool;
 
-class PreviewBuilderTest extends TestCase
+class PreviewManagerTest extends TestCase
 {
     /**
      * @test
      */
     public function it_fetches_page()
     {
-        $previewBuilder = $this->previewBuilder;
+        $previewManager = $this->previewManager;
 
-        $preview = $previewBuilder->fetch('http://www.example.com');
+        $preview = $previewManager->fetch('http://www.example.com');
 
         $this->assertInstanceOf(Preview::class, $preview);
     }
@@ -23,11 +23,11 @@ class PreviewBuilderTest extends TestCase
      */
     public function it_throws_error_if_request_fails()
     {
-        $previewBuilder = $this->getMockPreviewBuilder('foo.com/bar/foo.html');
+        $previewManager = $this->getMockPreviewManager('foo.com/bar/foo.html');
 
         $this->setExpectedException(\Exception::class);
 
-        $previewBuilder->fetch('http://www.example.com');
+        $previewManager->fetch('http://www.example.com');
     }
 
     /**
@@ -35,11 +35,11 @@ class PreviewBuilderTest extends TestCase
      */
     public function it_throws_error_if_url_is_not_valid()
     {
-        $previewBuilder = $this->previewBuilder;
+        $previewManager = $this->previewManager;
 
         $this->setExpectedException(\Exception::class);
 
-        $previewBuilder->fetch('fooBar');
+        $previewManager->fetch('fooBar');
     }
 
     /**
@@ -47,9 +47,9 @@ class PreviewBuilderTest extends TestCase
      */
     public function it_gets_the_page_title()
     {
-        $previewBuilder = $this->previewBuilder;
+        $previewManager = $this->previewManager;
 
-        $preview = $previewBuilder->fetch('http://www.example.com');
+        $preview = $previewManager->fetch('http://www.example.com');
 
         $this->assertEquals('Document', $preview->title);
     }
@@ -59,9 +59,9 @@ class PreviewBuilderTest extends TestCase
      */
     public function it_gets_the_meta_description()
     {
-        $previewBuilder = $this->previewBuilder;
+        $previewManager = $this->previewManager;
 
-        $preview = $previewBuilder->fetch('http://www.example.com');
+        $preview = $previewManager->fetch('http://www.example.com');
 
         $this->assertEquals('Foo bar bar foo', $preview->description);
     }
@@ -71,9 +71,9 @@ class PreviewBuilderTest extends TestCase
      */
     public function it_gets_the_meta_keywords()
     {
-        $previewBuilder = $this->previewBuilder;
+        $previewManager = $this->previewManager;
 
-        $preview = $previewBuilder->fetch('http://www.example.com');
+        $preview = $previewManager->fetch('http://www.example.com');
 
         $this->assertEquals(['test', 'thing', 'stuff'], $preview->meta['keywords']);
     }
@@ -83,9 +83,9 @@ class PreviewBuilderTest extends TestCase
      */
     public function it_gets_the_meta_title()
     {
-        $previewBuilder = $this->previewBuilder;
+        $previewManager = $this->previewManager;
 
-        $preview = $previewBuilder->fetch('http://www.example.com');
+        $preview = $previewManager->fetch('http://www.example.com');
 
         $this->assertEquals('Meta title', $preview->meta['title']);
     }
@@ -107,9 +107,9 @@ class PreviewBuilderTest extends TestCase
             "viewport" => "minimal-ui",
         ];
 
-        $previewBuilder = $this->previewBuilder;
+        $previewManager = $this->previewManager;
 
-        $preview = $previewBuilder->fetch('http://www.example.com');
+        $preview = $previewManager->fetch('http://www.example.com');
 
         $meta = $preview->meta;
 
@@ -123,9 +123,9 @@ class PreviewBuilderTest extends TestCase
      */
     public function it_returns_empty_array_object_if_there_is_no_meta()
     {
-        $previewBuilder = $this->getMockPreviewBuilder(__DIR__ . '/data/noMeta.html');
+        $previewManager = $this->getMockPreviewManager(__DIR__ . '/data/noMeta.html');
 
-        $preview = $previewBuilder->fetch('http://www.example.com');
+        $preview = $previewManager->fetch('http://www.example.com');
 
         $meta = $preview->meta;
 
@@ -137,9 +137,9 @@ class PreviewBuilderTest extends TestCase
      */
     public function it_gets_all_images()
     {
-        $previewBuilder = $this->previewBuilder;
+        $previewManager = $this->previewManager;
 
-        $preview = $previewBuilder->fetch('http://www.example.com/directory');
+        $preview = $previewManager->fetch('http://www.example.com/directory');
 
         $images = $preview->images;
 
@@ -149,7 +149,7 @@ class PreviewBuilderTest extends TestCase
 
         $this->assertEquals('http://www.example.com/images/img2.png', $images[2]);
 
-        $preview = $previewBuilder->fetch('http://www.example.com/directory/');
+        $preview = $previewManager->fetch('http://www.example.com/directory/');
 
         $images = $preview->images;
         
@@ -165,9 +165,9 @@ class PreviewBuilderTest extends TestCase
      */
     public function it_renders_base64_images()
     {
-        $previewBuilder = $this->previewBuilder;
+        $previewManager = $this->previewManager;
 
-        $preview = $previewBuilder->fetch('http://www.example.com/directory');
+        $preview = $previewManager->fetch('http://www.example.com/directory');
 
         $images = $preview->images;
 
@@ -179,9 +179,9 @@ class PreviewBuilderTest extends TestCase
      */
     public function it_creates_a_new_instance_with_dependencies()
     {
-        $previewBuilder = PreviewBuilder::create();
+        $previewManager = PreviewManager::create();
 
-        $this->assertInstanceOf(PreviewBuilder::class, $previewBuilder);
+        $this->assertInstanceOf(PreviewManager::class, $previewManager);
     }
 
     /**
@@ -197,11 +197,11 @@ class PreviewBuilderTest extends TestCase
 
         $pool = new Pool();
 
-        $previewBuilder = PreviewBuilder::create($pool);
+        $previewManager = PreviewManager::create($pool);
 
-        $previewBuilder->cache($previewIn);
+        $previewManager->cache($previewIn);
 
-        $previewOut = $previewBuilder->findOrFetch('http://www.example.com/directory');
+        $previewOut = $previewManager->findOrFetch('http://www.example.com/directory');
 
         $this->assertEquals($previewIn, $previewOut);
     }
@@ -211,9 +211,9 @@ class PreviewBuilderTest extends TestCase
      */
     public function it_fetches_page_if_not_cached()
     {
-        $previewBuilder = $this->previewBuilder;
+        $previewManager = $this->previewManager;
 
-        $preview = $previewBuilder->findOrFetch('http://www.example.com');
+        $preview = $previewManager->findOrFetch('http://www.example.com');
 
         $this->assertInstanceOf(Preview::class, $preview);
     }
@@ -224,8 +224,8 @@ class PreviewBuilderTest extends TestCase
     public function it_gets_url_from_text()
     {
         $text = "foo bar foo http://www.example.com bar baz";
-        $previewBuilder = $this->previewBuilder;
-        $preview = $previewBuilder->findUrl($text)->fetch();
+        $previewManager = $this->previewManager;
+        $preview = $previewManager->findUrl($text)->fetch();
 
         $this->assertInstanceOf(Preview::class, $preview);
     }

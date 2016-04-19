@@ -9,9 +9,9 @@ class PreviewTest extends TestCase
      */
     public function it_renders_a_preview()
     {
-        $previewBuilder = $this->previewBuilder;
+        $previewManager = $this->previewManager;
 
-        $preview = $previewBuilder->fetch('http://www.example.com');
+        $preview = $previewManager->fetch('http://www.example.com');
 
         $preview = $preview->render();
 
@@ -23,9 +23,9 @@ class PreviewTest extends TestCase
      */
     public function it_renders_a_preview_without_meta()
     {
-        $previewBuilder = $this->getMockPreviewBuilder(__DIR__ . '/data/noMeta.html');
+        $previewManager = $this->getMockPreviewManager(__DIR__ . '/data/noMeta.html');
 
-        $preview = $previewBuilder->fetch('http://www.example.com');
+        $preview = $previewManager->fetch('http://www.example.com');
 
         $preview = $preview->render();
 
@@ -37,9 +37,9 @@ class PreviewTest extends TestCase
      */
     public function it_renders_page_without_image()
     {
-        $previewBuilder = $this->getMockPreviewBuilder(__DIR__ . '/data/noImages.html');
+        $previewManager = $this->getMockPreviewManager(__DIR__ . '/data/noImages.html');
 
-        $preview = $previewBuilder->fetch('http://www.example.com');
+        $preview = $previewManager->fetch('http://www.example.com');
 
         $preview = $preview->render();
 
@@ -51,9 +51,9 @@ class PreviewTest extends TestCase
      */
     public function it_renders_templates_dynamically()
     {
-        $previewBuilder = $this->previewBuilder;
+        $previewManager = $this->previewManager;
 
-        $preview = $previewBuilder->fetch('http://www.example.com');
+        $preview = $previewManager->fetch('http://www.example.com');
 
         $this->assertContains('class="thumbnail"', $preview->render('thumbnail'));
 
