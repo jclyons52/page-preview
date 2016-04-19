@@ -20,8 +20,8 @@ $ composer require jclyons52/page-preview
 ## Usage
 
 ``` php
-$previewBuilder = PreviewBuilder::create();
-$preview = $previewBuilder->fetch('https://somewebsite.com');
+$previewManager = PreviewManager::create();
+$preview = $previewManager->fetch('https://somewebsite.com');
 echo $preview->render(); // returns bootstrap media link preview
 echo $preview->toJson(); // returns json string of preview attributes
 ```
@@ -29,20 +29,34 @@ echo $preview->toJson(); // returns json string of preview attributes
 or do it inline:
 
 ```php
-PreviewBuilder::create()->fetch('https://somewebsite.com')->render();
+PreviewManager::create()->fetch('https://somewebsite.com')->render();
 ```
 
 Use another one of the other default templates:
 
 ```php
-PreviewBuilder::create()->fetch('https://somewebsite.com')->render('thumbnail');
+$previewManager->render('thumbnail');
 ```
 define your own templates:
 
 ```php
-PreviewBuilder::create()->fetch('https://somewebsite.com')->render('myAwesomeTemplate', '/path/to/template/directory');
+$previewManager->fetch('https://somewebsite.com')->render('myAwesomeTemplate', '/path/to/template/directory');
 ```
 
+
+## caching
+Http calls are slow, so to speed up your response times you may want to cache your previews. 
+This package can take any psr-6 compliant cache driver as a parameter. 
+
+```php
+$pool = new Pool();
+
+$previewManager = PreviewManager::create($pool);
+
+$preview = $previewManager->findOrFetch('http://www.example.com/directory');
+
+$previewManager->cache($preview);
+```
 
 The data available for you templates will be:
 
