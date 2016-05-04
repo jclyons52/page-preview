@@ -25,12 +25,28 @@ class Cache
         }
     }
 
-    public function set(Preview $preview)
+    public function set(Preview $preview, $expiresAt = null)
     {
         $item = $this->pool->getItem(md5($preview->url));
 
         $item->set(serialize($preview));
 
+        $item->expiresAfter($this->getExpireTime($expiresAt));
+
         $this->pool->save($item);
+    }
+
+
+    /**
+     * @param $expiresAt
+     * @return \DateInterval
+     */
+    private function getExpireTime($expiresAt)
+    {
+        if ($expiresAt instanceof \DateInterval) {
+            return $expiresAt;
+        }
+
+        return new \DateInterval('P10D');
     }
 }

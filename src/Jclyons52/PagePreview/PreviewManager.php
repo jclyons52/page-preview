@@ -95,9 +95,9 @@ class PreviewManager
         return $this->cache->get($url);
     }
 
-    public function cache(Preview $preview)
+    public function cache(Preview $preview, $expiresAt = null)
     {
-        $this->cache->set($preview);
+        $this->cache->set($preview, $expiresAt);
     }
     /**
      * returns an instance of Preview
