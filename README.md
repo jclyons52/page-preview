@@ -9,6 +9,8 @@
 
 Creates link previews to pages with thumbnail, title and description
 
+[demo](http://page-preview.jclyons-blog.com/)
+
 ## Install
 
 Via Composer
