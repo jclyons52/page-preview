@@ -77,7 +77,15 @@ class Crawler
         if ($images === []) {
             return [];
         }
-        return $images->attr('src');
+
+        $urls = $images->attr('src');
+
+        $urls = array_filter($urls, function ($url) {
+            $url = trim($url);
+            return $url;
+        });
+
+        return $urls;
         
     }
 
