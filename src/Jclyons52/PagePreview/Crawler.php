@@ -11,59 +11,38 @@ class Crawler
      * @var \Jclyons52\PHPQuery\Document
      */
     private $document;
-    
+
     public function __construct(Document $document)
     {
         $this->document = $document;
     }
 
     /**
-     * @return string
-     */
-    public function title()
-    {
-        return $this->document->querySelector('title')->text();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function metaKeywords()
-    {
-        $keywordsElement = $this->document->querySelector('meta[name="keywords"]');
-
-        if (!$keywordsElement) {
-            return [];
-        }
-
-        $keywordString = $keywordsElement->attr('content');
-
-        $keywords = explode(',', $keywordString);
-
-        return array_map(function ($word) {
-            return trim($word);
-
-        }, $keywords);
-    }
-
-    /**
-     * @param string $element
      * @return array
      */
-    public function meta($element = null)
+    public function getPreviewData($url)
     {
-        $selector = "meta";
-        if ($element !== null) {
-            $selector .= "[name='{$element}']";
-            $metaTags =  $this->document->querySelector($selector);
-            if ($metaTags === null) {
-                return null;
-            }
-            return  $metaTags->attr('content');
-        }
-        $metaTags = $this->document->querySelectorAll($selector);
+        $title = $this->title();
 
-        return $this->metaTagsToArray($metaTags);
+        $images = $this->formatImages($url);
+
+        $description = $this->meta('description');
+
+        $meta = $this->meta();
+
+        $keywords = $this->metaKeywords();
+
+        if ($keywords !== []) {
+            $meta['keywords'] = $keywords;
+        }
+
+        return [
+            'title' => $title,
+            'images' => $images,
+            'description' => $description,
+            'url' => $url->original,
+            'meta' => $meta,
+        ];
     }
 
     /**
@@ -86,7 +65,55 @@ class Crawler
         });
 
         return $urls;
-        
+    }
+
+    /**
+     * @return string
+     */
+    private function title()
+    {
+        return $this->document->querySelector('title')->text();
+    }
+
+    /**
+     * @return mixed
+     */
+    private function metaKeywords()
+    {
+        $keywordsElement = $this->document->querySelector('meta[name="keywords"]');
+
+        if (!$keywordsElement) {
+            return [];
+        }
+
+        $keywordString = $keywordsElement->attr('content');
+
+        $keywords = explode(',', $keywordString);
+
+        return array_map(function ($word) {
+            return trim($word);
+
+        }, $keywords);
+    }
+
+    /**
+     * @param string $element
+     * @return array
+     */
+    private function meta($element = null)
+    {
+        $selector = "meta";
+        if ($element === null) {
+            $metaTags = $this->document->querySelectorAll($selector);
+            return $this->metaTagsToArray($metaTags);
+        }
+
+        $selector .= "[name='{$element}']";
+        $metaTags =  $this->document->querySelector($selector);
+        if ($metaTags === null) {
+            return null;
+        }
+        return  $metaTags->attr('content');
     }
 
     /**
@@ -108,5 +135,16 @@ class Crawler
             $values[$name] = $content;
         }
         return $values;
+    }
+
+    /**
+     * @param $url Url
+     * @return mixed
+     */
+    private function formatImages($url)
+    {
+        return array_map(function ($imageUrl) use ($url) {
+            return $url->formatRelativeToAbsolute($imageUrl);
+        }, $this->images());
     }
 }

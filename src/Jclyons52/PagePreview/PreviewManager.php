@@ -72,11 +72,7 @@ class PreviewManager
             throw new \Exception('failed to load page');
         }
 
-        $document = new Document($body);
-
-        $this->crawler = new Crawler($document);
-
-        return $this->getPreview();
+        return $this->getPreview($body);
     }
 
     public function findUrl($text)
@@ -103,40 +99,16 @@ class PreviewManager
      * returns an instance of Preview
      * @return Preview
      */
-    private function getPreview()
+    private function getPreview($body)
     {
-        $title = $this->crawler->title();
+        $document = new Document($body);
 
-        $images = $this->images();
+        $this->crawler = new Crawler($document);
 
-        $description = $this->crawler->meta('description');
-
-        $meta = $this->crawler->meta();
-
-        $keywords =  $this->crawler->metaKeywords();
-
-        if ($keywords !== []) {
-            $meta['keywords'] = $keywords;
-        }
+        $data =$this->crawler->getPreviewData($this->url);
 
         $media = new Media($this->http);
 
-        return new Preview($media, [
-            'title' => $title,
-            'images' => $images,
-            'description' => $description,
-            'url' => $this->url->original,
-            'meta' => $meta,
-        ]);
-    }
-
-    private function images()
-    {
-        $urls = $this->crawler->images();
-        $result = [];
-        foreach ($urls as $url) {
-            $result[] = $this->url->formatRelativeToAbsolute($url);
-        }
-        return $result;
+        return new Preview($media, $data);
     }
 }
