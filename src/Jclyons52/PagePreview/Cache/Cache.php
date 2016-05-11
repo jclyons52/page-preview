@@ -45,7 +45,7 @@ class Cache
      */
     private function getExpireTime($expiresAt)
     {
-        if($expiresAt instanceof \DateTime) {
+        if ($expiresAt instanceof \DateTime) {
             return $expiresAt;
         }
 
