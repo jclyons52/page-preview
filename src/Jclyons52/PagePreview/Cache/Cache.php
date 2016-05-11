@@ -31,22 +31,37 @@ class Cache
 
         $item->set(serialize($preview));
 
-        $item->expiresAfter($this->getExpireTime($expiresAt));
+        $item->expiresAt($this->getExpireTime($expiresAt));
 
         $this->pool->save($item);
+        
+        return $item;
     }
 
 
     /**
      * @param $expiresAt
-     * @return \DateInterval
+     * @return \DateTime
      */
     private function getExpireTime($expiresAt)
     {
-        if ($expiresAt instanceof \DateInterval) {
+        if($expiresAt instanceof \DateTime) {
             return $expiresAt;
         }
 
-        return new \DateInterval('P10D');
+        $date = new \DateTime();
+
+        if ($expiresAt instanceof \DateInterval) {
+            $date->add($expiresAt);
+            return $date;
+        }
+
+        if (is_numeric($expiresAt)) {
+            $dateInterval = \DateInterval::createFromDateString(abs($expiresAt) . ' seconds');
+            $date->add($dateInterval);
+            return $date;
+        }
+
+        return $date->add(new \DateInterval('P1D'));
     }
 }
