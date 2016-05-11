@@ -229,4 +229,29 @@ class PreviewManagerTest extends TestCase
 
         $this->assertInstanceOf(Preview::class, $preview);
     }
+
+    /**
+     * @test
+     */
+    public function it_takes_url_object_as_input()
+    {
+        $text = "foo bar foo http://www.example.com bar baz";
+        $previewManager = $this->previewManager;
+        $url = Url::findFirst($text);
+        $preview = $previewManager->fetch($url);
+
+        $this->assertInstanceOf(Preview::class, $preview);
+    }
+
+    /**
+     * @test
+     */
+    public function it_fails_if_no_url_is_provided()
+    {
+        $previewManager = $this->previewManager;
+
+        $this->setExpectedException(\Exception::class);
+
+        $previewManager->fetch();
+    }
 }

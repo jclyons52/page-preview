@@ -63,7 +63,7 @@ class PreviewManager
             $this->url = new Url($url);
         }
         if ($this->url === null) {
-            throw new \Exception('failed to get url');
+            throw new \Exception('no url provided');
         }
 
         $body = $this->http->get($this->url->original);
